@@ -44,11 +44,8 @@ async def register_0(message: types.Message, state: FSMContext):
 
 
 @dp.message_handler(state=Register_new_user_state.Q1)
-async def register_1(message: types.Message, call: types.CallbackQuery, state: FSMContext):
-    if call.data == "pass_parametr":
-        value = 'Пропустить'
-    else:
-        value = message.text
+async def register_1(message: types.Message, state: FSMContext):
+    value = message.text
     result = Dict_temp_oper[f'{message.chat.id}'][Dict_turn[f'{message.chat.id}']]
 
     await state.update_data({f'{result[0]}': f'{value}'})
