@@ -13,6 +13,7 @@ async def my_card(message: types.Message):
     sql = "SELECT * FROM users WHERE id = %s;"
     result = db.execute(sql, parameters=(message.chat.id,), fetchall=True)
     result = result[0]
+    print(result)
 
     text = f"#myinfo (@{message.chat.username})\n\n\
 {result[1]}\n\

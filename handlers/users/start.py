@@ -15,5 +15,6 @@ async def bot_start(message: types.Message, state: FSMContext):
     result = db.execute(sql, fetchone=True)
     if result is None:
         await register_new(message, state)
-    await message.answer("Ваши реквизиты:", reply_markup=main_menu(message))
-    await my_card(message)
+    else:
+        await message.answer("Ваши реквизиты:", reply_markup=main_menu(message))
+        await my_card(message)
