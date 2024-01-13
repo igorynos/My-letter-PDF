@@ -6,7 +6,7 @@ from aiogram.types import KeyboardButton, ReplyKeyboardMarkup
 from keyboards.inline.lst_cont_user import lst_cont_users_keyboard
 from keyboards.default.main_menu import main_menu
 
-from states import Register_new_user_state
+from states import Add_new_cont_user_state
 
 import random
 
@@ -46,10 +46,10 @@ async def add_new_cont_user(call: types.CallbackQuery, state: FSMContext):
     Dict_turn[f'{call.message.chat.id}'] = 0
 
     await call.message.answer("Напиши ИНН получателя")
-    await Register_new_user_state.first()
+    await Add_new_cont_user_state.first()
 
 
-@dp.message_handler(state=Register_new_user_state.Q0)
+@dp.message_handler(state=Add_new_cont_user_state.Q0)
 async def register_0(message: types.Message, state: FSMContext):
     value = message.text
 
@@ -72,13 +72,13 @@ async def register_0(message: types.Message, state: FSMContext):
             await message.answer(f"Напиши {result[3].lower()}")
         else:
             await message.answer(f"Напиши {result[3].lower()}", reply_markup=pass_parametr_keyboard)
-        await Register_new_user_state.next()
+        await Add_new_cont_user_state.next()
 
     except:
         await state.finish()
 
 
-@dp.message_handler(state=Register_new_user_state.Q1)
+@dp.message_handler(state=Add_new_cont_user_state.Q1)
 async def register_1(message: types.Message, state: FSMContext):
     value = message.text
     result = Dict_temp_oper[f'{message.chat.id}'][Dict_turn[f'{message.chat.id}']]
@@ -94,7 +94,7 @@ async def register_1(message: types.Message, state: FSMContext):
         result = Dict_temp_oper[f'{message.chat.id}'][Dict_turn[f'{message.chat.id}']]
 
         await message.answer(f"Напиши {result[3].lower()}", reply_markup=pass_parametr_keyboard)
-        await Register_new_user_state.next()
+        await Add_new_cont_user_state.next()
 
     except:
         data = await state.get_data()
@@ -104,7 +104,7 @@ async def register_1(message: types.Message, state: FSMContext):
         await lst_cont_users_keyboard(message)
 
 
-@dp.message_handler(state=Register_new_user_state.Q2)
+@dp.message_handler(state=Add_new_cont_user_state.Q2)
 async def register_2(message: types.Message, state: FSMContext):
     value = message.text
     result = Dict_temp_oper[f'{message.chat.id}'][Dict_turn[f'{message.chat.id}']]
@@ -120,7 +120,7 @@ async def register_2(message: types.Message, state: FSMContext):
         result = Dict_temp_oper[f'{message.chat.id}'][Dict_turn[f'{message.chat.id}']]
 
         await message.answer(f"Напиши {result[3].lower()}", reply_markup=pass_parametr_keyboard)
-        await Register_new_user_state.next()
+        await Add_new_cont_user_state.next()
 
     except:
         data = await state.get_data()
@@ -130,7 +130,7 @@ async def register_2(message: types.Message, state: FSMContext):
         await lst_cont_users_keyboard(message)
 
 
-@dp.message_handler(state=Register_new_user_state.Q3)
+@dp.message_handler(state=Add_new_cont_user_state.Q3)
 async def register_3(message: types.Message, state: FSMContext):
     value = message.text
     result = Dict_temp_oper[f'{message.chat.id}'][Dict_turn[f'{message.chat.id}']]
@@ -146,7 +146,7 @@ async def register_3(message: types.Message, state: FSMContext):
         result = Dict_temp_oper[f'{message.chat.id}'][Dict_turn[f'{message.chat.id}']]
 
         await message.answer(f"Напиши {result[3].lower()}", reply_markup=pass_parametr_keyboard)
-        await Register_new_user_state.next()
+        await Add_new_cont_user_state.next()
 
     except:
         data = await state.get_data()
@@ -156,7 +156,7 @@ async def register_3(message: types.Message, state: FSMContext):
         await lst_cont_users_keyboard(message)
 
 
-@dp.message_handler(state=Register_new_user_state.Q4)
+@dp.message_handler(state=Add_new_cont_user_state.Q4)
 async def register_4(message: types.Message, state: FSMContext):
     value = message.text
     result = Dict_temp_oper[f'{message.chat.id}'][Dict_turn[f'{message.chat.id}']]
@@ -172,7 +172,7 @@ async def register_4(message: types.Message, state: FSMContext):
         result = Dict_temp_oper[f'{message.chat.id}'][Dict_turn[f'{message.chat.id}']]
 
         await message.answer(f"Напиши {result[3].lower()}", reply_markup=pass_parametr_keyboard)
-        await Register_new_user_state.next()
+        await Add_new_cont_user_state.next()
 
     except:
         data = await state.get_data()
@@ -182,7 +182,7 @@ async def register_4(message: types.Message, state: FSMContext):
         await lst_cont_users_keyboard(message)
 
 
-@dp.message_handler(state=Register_new_user_state.Q5)
+@dp.message_handler(state=Add_new_cont_user_state.Q5)
 async def register_5(message: types.Message, state: FSMContext):
     value = message.text
     result = Dict_temp_oper[f'{message.chat.id}'][Dict_turn[f'{message.chat.id}']]
@@ -198,7 +198,7 @@ async def register_5(message: types.Message, state: FSMContext):
         result = Dict_temp_oper[f'{message.chat.id}'][Dict_turn[f'{message.chat.id}']]
 
         await message.answer(f"Напиши {result[3].lower()}", reply_markup=pass_parametr_keyboard)
-        await Register_new_user_state.next()
+        await Add_new_cont_user_state.next()
 
     except:
         data = await state.get_data()
@@ -208,7 +208,7 @@ async def register_5(message: types.Message, state: FSMContext):
         await lst_cont_users_keyboard(message)
 
 
-@dp.message_handler(state=Register_new_user_state.Q6)
+@dp.message_handler(state=Add_new_cont_user_state.Q6)
 async def register_6(message: types.Message, state: FSMContext):
     value = message.text
     result = Dict_temp_oper[f'{message.chat.id}'][Dict_turn[f'{message.chat.id}']]
@@ -224,7 +224,7 @@ async def register_6(message: types.Message, state: FSMContext):
         result = Dict_temp_oper[f'{message.chat.id}'][Dict_turn[f'{message.chat.id}']]
 
         await message.answer(f"Напиши {result[3].lower()}", reply_markup=pass_parametr_keyboard)
-        await Register_new_user_state.next()
+        await Add_new_cont_user_state.next()
 
     except:
         data = await state.get_data()
@@ -234,7 +234,7 @@ async def register_6(message: types.Message, state: FSMContext):
         await lst_cont_users_keyboard(message)
 
 
-@dp.message_handler(state=Register_new_user_state.Q7)
+@dp.message_handler(state=Add_new_cont_user_state.Q7)
 async def register_7(message: types.Message, state: FSMContext):
     value = message.text
     result = Dict_temp_oper[f'{message.chat.id}'][Dict_turn[f'{message.chat.id}']]
@@ -250,7 +250,7 @@ async def register_7(message: types.Message, state: FSMContext):
         result = Dict_temp_oper[f'{message.chat.id}'][Dict_turn[f'{message.chat.id}']]
 
         await message.answer(f"Напиши {result[3].lower()}", reply_markup=pass_parametr_keyboard)
-        await Register_new_user_state.next()
+        await Add_new_cont_user_state.next()
 
     except:
         data = await state.get_data()
@@ -260,7 +260,7 @@ async def register_7(message: types.Message, state: FSMContext):
         await lst_cont_users_keyboard(message)
 
 
-@dp.message_handler(state=Register_new_user_state.Q8)
+@dp.message_handler(state=Add_new_cont_user_state.Q8)
 async def register_8(message: types.Message, state: FSMContext):
     value = message.text
     result = Dict_temp_oper[f'{message.chat.id}'][Dict_turn[f'{message.chat.id}']]
@@ -276,7 +276,7 @@ async def register_8(message: types.Message, state: FSMContext):
         result = Dict_temp_oper[f'{message.chat.id}'][Dict_turn[f'{message.chat.id}']]
 
         await message.answer(f"Напиши {result[3].lower()}", reply_markup=pass_parametr_keyboard)
-        await Register_new_user_state.next()
+        await Add_new_cont_user_state.next()
 
     except:
         data = await state.get_data()
@@ -286,7 +286,7 @@ async def register_8(message: types.Message, state: FSMContext):
         await lst_cont_users_keyboard(message)
 
 
-@dp.message_handler(state=Register_new_user_state.Q9)
+@dp.message_handler(state=Add_new_cont_user_state.Q9)
 async def register_9(message: types.Message, state: FSMContext):
     value = message.text
     result = Dict_temp_oper[f'{message.chat.id}'][Dict_turn[f'{message.chat.id}']]
@@ -302,7 +302,7 @@ async def register_9(message: types.Message, state: FSMContext):
         result = Dict_temp_oper[f'{message.chat.id}'][Dict_turn[f'{message.chat.id}']]
 
         await message.answer(f"Напиши {result[3].lower()}", reply_markup=pass_parametr_keyboard)
-        await Register_new_user_state.next()
+        await Add_new_cont_user_state.next()
 
     except:
         data = await state.get_data()
@@ -312,7 +312,7 @@ async def register_9(message: types.Message, state: FSMContext):
         await lst_cont_users_keyboard(message)
 
 
-@dp.message_handler(state=Register_new_user_state.Q10)
+@dp.message_handler(state=Add_new_cont_user_state.Q10)
 async def register_10(message: types.Message, state: FSMContext):
     value = message.text
     result = Dict_temp_oper[f'{message.chat.id}'][Dict_turn[f'{message.chat.id}']]
@@ -328,7 +328,7 @@ async def register_10(message: types.Message, state: FSMContext):
         result = Dict_temp_oper[f'{message.chat.id}'][Dict_turn[f'{message.chat.id}']]
 
         await message.answer(f"Напиши {result[3].lower()}", reply_markup=pass_parametr_keyboard)
-        await Register_new_user_state.next()
+        await Add_new_cont_user_state.next()
 
     except:
         data = await state.get_data()
@@ -338,7 +338,7 @@ async def register_10(message: types.Message, state: FSMContext):
         await lst_cont_users_keyboard(message)
 
 
-@dp.message_handler(state=Register_new_user_state.Q11)
+@dp.message_handler(state=Add_new_cont_user_state.Q11)
 async def register_11(message: types.Message, state: FSMContext):
     value = message.text
     result = Dict_temp_oper[f'{message.chat.id}'][Dict_turn[f'{message.chat.id}']]
@@ -354,7 +354,7 @@ async def register_11(message: types.Message, state: FSMContext):
         result = Dict_temp_oper[f'{message.chat.id}'][Dict_turn[f'{message.chat.id}']]
 
         await message.answer(f"Напиши {result[3].lower()}", reply_markup=pass_parametr_keyboard)
-        await Register_new_user_state.next()
+        await Add_new_cont_user_state.next()
 
     except:
         data = await state.get_data()
@@ -364,7 +364,7 @@ async def register_11(message: types.Message, state: FSMContext):
         await lst_cont_users_keyboard(message)
 
 
-@dp.message_handler(state=Register_new_user_state.Q12)
+@dp.message_handler(state=Add_new_cont_user_state.Q12)
 async def register_12(message: types.Message, state: FSMContext):
     value = message.text
     result = Dict_temp_oper[f'{message.chat.id}'][Dict_turn[f'{message.chat.id}']]
@@ -380,7 +380,7 @@ async def register_12(message: types.Message, state: FSMContext):
         result = Dict_temp_oper[f'{message.chat.id}'][Dict_turn[f'{message.chat.id}']]
 
         await message.answer(f"Напиши {result[3].lower()}", reply_markup=pass_parametr_keyboard)
-        await Register_new_user_state.next()
+        await Add_new_cont_user_state.next()
 
     except:
         data = await state.get_data()

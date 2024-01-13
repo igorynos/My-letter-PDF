@@ -19,7 +19,6 @@ pass_parametr_keyboard = ReplyKeyboardMarkup(
 async def register_new(message: types.Message, state: FSMContext):
     sql = "SELECT * FROM lst_oper WHERE type = %s;"
     result = db.execute(sql, parameters=('user',), fetchall=True)
-    print(result)
     Dict_temp_oper[f'{message.chat.id}'] = result
     Dict_turn[f'{message.chat.id}'] = 0
 
@@ -30,7 +29,6 @@ async def register_new(message: types.Message, state: FSMContext):
 @dp.message_handler(state=Register_new_user_state.Q0)
 async def register_0(message: types.Message, state: FSMContext):
     value = message.text
-    print(value)
 
     db.add_user(name=value, id=message.chat.id)
     Dict_turn[f'{message.chat.id}'] += 1
