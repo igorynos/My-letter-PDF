@@ -28,4 +28,6 @@ async def lst_cont_users_to_letter(message: types.Message):
     for x in result:
         change_card.add(InlineKeyboardButton(
             text=x[2], callback_data=lst_cont_user_to_letter_callback.new(cont_id=x[0])))
+    change_card.add(InlineKeyboardButton(
+        "➕ Добавить получателя", callback_data='add_new_cont_user'))
     await message.answer("Выберите получателя:", reply_markup=change_card)
