@@ -220,7 +220,11 @@ async def handle_answer_lst(message: types.Message, state: FSMContext):
     lst_none = data['lst_none']
     dict_oper = data['dict_oper']
 
-    dict_oper[lst_none[dict_user_indx[f"{message.chat.id}"]]] = message.text
+    try:
+        dict_oper[lst_none[dict_user_indx[f"{message.chat.id}"]]
+                  ] = message.text
+    except:
+        await state.finish()
 
     try:
         dict_user_indx[f"{message.chat.id}"] += 1
@@ -231,7 +235,6 @@ async def handle_answer_lst(message: types.Message, state: FSMContext):
         await message.answer(text=f'Введите {result[0].lower()}')
         await State_list.next()
     except:
-        await state.finish()
         db.update_cont_user(
             cont_id=dict_temp_cont_user[f"{message.chat.id}"], dict_oper=dict_oper)
         db.update_user(id=message.chat.id, dict_oper=dict_oper)
