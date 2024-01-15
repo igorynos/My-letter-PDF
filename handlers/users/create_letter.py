@@ -231,6 +231,7 @@ async def handle_answer_lst(message: types.Message, state: FSMContext):
         await message.answer(text=f'Введите {result[0].lower()}')
         await State_list.next()
     except:
+        await state.finish()
         db.update_cont_user(
             cont_id=dict_temp_cont_user[f"{message.chat.id}"], dict_oper=dict_oper)
         db.update_user(id=message.chat.id, dict_oper=dict_oper)
