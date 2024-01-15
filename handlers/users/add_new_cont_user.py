@@ -2,6 +2,7 @@ from loader import dp, db, bot
 from aiogram import types
 from aiogram.dispatcher.storage import FSMContext
 from aiogram.types import KeyboardButton, ReplyKeyboardMarkup
+from aiogram.types import InlineKeyboardButton, InlineKeyboardMarkup
 
 from keyboards.inline.lst_cont_user import lst_cont_users_keyboard
 from keyboards.default.main_menu import main_menu
@@ -16,9 +17,9 @@ Dict_temp_oper = {}
 Dict_turn = {}
 
 
-pass_parametr = KeyboardButton(
-    text='Пропустить')
-pass_parametr_keyboard = ReplyKeyboardMarkup(
+pass_parametr = InlineKeyboardButton(
+    text='Пропустить', callback_data="pass_parametr")
+pass_parametr_keyboard = InlineKeyboardMarkup(
     resize_keyboard=True).add(pass_parametr)
 
 
@@ -78,9 +79,15 @@ async def register_0(message: types.Message, state: FSMContext):
         await state.finish()
 
 
-@dp.message_handler(state=Add_new_cont_user_state.Q1)
-async def register_1(message: types.Message, state: FSMContext):
-    value = message.text
+@dp.callback_query_handler(text="pass_parametr", state=Add_new_cont_user_state)
+@dp.message_handler(state=Add_new_cont_user_state)
+async def register_1(message, state: FSMContext):
+    if type(message) == types.Message:
+        value = message.text
+    elif type(message) == types.CallbackQuery:
+        value = "Пропустить"
+        message = message.message
+
     result = Dict_temp_oper[f'{message.chat.id}'][Dict_turn[f'{message.chat.id}']]
 
     data = await state.get_data()
@@ -104,287 +111,312 @@ async def register_1(message: types.Message, state: FSMContext):
         await lst_cont_users_keyboard(message)
 
 
-@dp.message_handler(state=Add_new_cont_user_state.Q2)
-async def register_2(message: types.Message, state: FSMContext):
-    value = message.text
-    result = Dict_temp_oper[f'{message.chat.id}'][Dict_turn[f'{message.chat.id}']]
+# @dp.callback_query_handler(text="pass_parametr", state=Add_new_cont_user_state.Q2)
+# @dp.message_handler(state=Add_new_cont_user_state.Q2)
+# async def register_2(message, state: FSMContext):
+#     if type(message) == types.Message:
+#         value = message.text
+#     elif type(message) == types.CallbackQuery:
+#         value = "Пропустить"
+#         message = message.message
+#     result = Dict_temp_oper[f'{message.chat.id}'][Dict_turn[f'{message.chat.id}']]
+
+#     data = await state.get_data()
+#     cont_id = data["cont_id"]
 
-    data = await state.get_data()
-    cont_id = data["cont_id"]
+#     await state.update_data({f'{result[0]}': f'{value}'})
 
-    await state.update_data({f'{result[0]}': f'{value}'})
+#     Dict_turn[f'{message.chat.id}'] += 1
 
-    Dict_turn[f'{message.chat.id}'] += 1
+#     try:
+#         result = Dict_temp_oper[f'{message.chat.id}'][Dict_turn[f'{message.chat.id}']]
 
-    try:
-        result = Dict_temp_oper[f'{message.chat.id}'][Dict_turn[f'{message.chat.id}']]
+#         await message.answer(f"Напиши {result[3].lower()}", reply_markup=pass_parametr_keyboard)
+#         await Add_new_cont_user_state.next()
+
+#     except:
+#         data = await state.get_data()
+#         db.update_cont_user(cont_id, dict_oper=data)
+#         await state.finish()
+#         await message.answer(f"Получатель добавлен", reply_markup=main_menu(message))
+#         await lst_cont_users_keyboard(message)
+
+
+# @dp.callback_query_handler(text="pass_parametr", state=Add_new_cont_user_state.Q3)
+# @dp.message_handler(state=Add_new_cont_user_state.Q3)
+# async def register_3(message, state: FSMContext):
+#     if type(message) == types.Message:
+#         value = message.text
+#     elif type(message) == types.CallbackQuery:
+#         value = "Пропустить"
+#         message = message.message
+#     result = Dict_temp_oper[f'{message.chat.id}'][Dict_turn[f'{message.chat.id}']]
 
-        await message.answer(f"Напиши {result[3].lower()}", reply_markup=pass_parametr_keyboard)
-        await Add_new_cont_user_state.next()
+#     data = await state.get_data()
+#     cont_id = data["cont_id"]
 
-    except:
-        data = await state.get_data()
-        db.update_cont_user(cont_id, dict_oper=data)
-        await state.finish()
-        await message.answer(f"Получатель добавлен", reply_markup=main_menu(message))
-        await lst_cont_users_keyboard(message)
+#     await state.update_data({f'{result[0]}': f'{value}'})
 
+#     Dict_turn[f'{message.chat.id}'] += 1
 
-@dp.message_handler(state=Add_new_cont_user_state.Q3)
-async def register_3(message: types.Message, state: FSMContext):
-    value = message.text
-    result = Dict_temp_oper[f'{message.chat.id}'][Dict_turn[f'{message.chat.id}']]
+#     try:
+#         result = Dict_temp_oper[f'{message.chat.id}'][Dict_turn[f'{message.chat.id}']]
 
-    data = await state.get_data()
-    cont_id = data["cont_id"]
+#         await message.answer(f"Напиши {result[3].lower()}", reply_markup=pass_parametr_keyboard)
+#         await Add_new_cont_user_state.next()
+
+#     except:
+#         data = await state.get_data()
+#         db.update_cont_user(cont_id, dict_oper=data)
+#         await state.finish()
+#         await message.answer(f"Получатель добавлен", reply_markup=main_menu(message))
+#         await lst_cont_users_keyboard(message)
 
-    await state.update_data({f'{result[0]}': f'{value}'})
 
-    Dict_turn[f'{message.chat.id}'] += 1
+# @dp.callback_query_handler(text="pass_parametr", state=Add_new_cont_user_state.Q4)
+# @dp.message_handler(state=Add_new_cont_user_state.Q4)
+# async def register_4(message, state: FSMContext):
+#     if type(message) == types.Message:
+#         value = message.text
+#     elif type(message) == types.CallbackQuery:
+#         value = "Пропустить"
+#         message = message.message
+#     result = Dict_temp_oper[f'{message.chat.id}'][Dict_turn[f'{message.chat.id}']]
 
-    try:
-        result = Dict_temp_oper[f'{message.chat.id}'][Dict_turn[f'{message.chat.id}']]
+#     data = await state.get_data()
+#     cont_id = data["cont_id"]
 
-        await message.answer(f"Напиши {result[3].lower()}", reply_markup=pass_parametr_keyboard)
-        await Add_new_cont_user_state.next()
+#     await state.update_data({f'{result[0]}': f'{value}'})
 
-    except:
-        data = await state.get_data()
-        db.update_cont_user(cont_id, dict_oper=data)
-        await state.finish()
-        await message.answer(f"Получатель добавлен", reply_markup=main_menu(message))
-        await lst_cont_users_keyboard(message)
+#     Dict_turn[f'{message.chat.id}'] += 1
 
+#     try:
+#         result = Dict_temp_oper[f'{message.chat.id}'][Dict_turn[f'{message.chat.id}']]
 
-@dp.message_handler(state=Add_new_cont_user_state.Q4)
-async def register_4(message: types.Message, state: FSMContext):
-    value = message.text
-    result = Dict_temp_oper[f'{message.chat.id}'][Dict_turn[f'{message.chat.id}']]
+#         await message.answer(f"Напиши {result[3].lower()}", reply_markup=pass_parametr_keyboard)
+#         await Add_new_cont_user_state.next()
 
-    data = await state.get_data()
-    cont_id = data["cont_id"]
+#     except:
+#         data = await state.get_data()
+#         db.update_cont_user(cont_id, dict_oper=data)
+#         await state.finish()
+#         await message.answer(f"Получатель добавлен", reply_markup=main_menu(message))
+#         await lst_cont_users_keyboard(message)
 
-    await state.update_data({f'{result[0]}': f'{value}'})
 
-    Dict_turn[f'{message.chat.id}'] += 1
+# @dp.callback_query_handler(text="pass_parametr", state=Add_new_cont_user_state.Q5)
+# @dp.message_handler(state=Add_new_cont_user_state.Q5)
+# async def register_5(message, state: FSMContext):
+#     if type(message) == types.Message:
+#         value = message.text
+#     elif type(message) == types.CallbackQuery:
+#         value = "Пропустить"
+#         message = message.message
+#     result = Dict_temp_oper[f'{message.chat.id}'][Dict_turn[f'{message.chat.id}']]
 
-    try:
-        result = Dict_temp_oper[f'{message.chat.id}'][Dict_turn[f'{message.chat.id}']]
+#     data = await state.get_data()
+#     cont_id = data["cont_id"]
 
-        await message.answer(f"Напиши {result[3].lower()}", reply_markup=pass_parametr_keyboard)
-        await Add_new_cont_user_state.next()
+#     await state.update_data({f'{result[0]}': f'{value}'})
 
-    except:
-        data = await state.get_data()
-        db.update_cont_user(cont_id, dict_oper=data)
-        await state.finish()
-        await message.answer(f"Получатель добавлен", reply_markup=main_menu(message))
-        await lst_cont_users_keyboard(message)
+#     Dict_turn[f'{message.chat.id}'] += 1
 
+#     try:
+#         result = Dict_temp_oper[f'{message.chat.id}'][Dict_turn[f'{message.chat.id}']]
 
-@dp.message_handler(state=Add_new_cont_user_state.Q5)
-async def register_5(message: types.Message, state: FSMContext):
-    value = message.text
-    result = Dict_temp_oper[f'{message.chat.id}'][Dict_turn[f'{message.chat.id}']]
+#         await message.answer(f"Напиши {result[3].lower()}", reply_markup=pass_parametr_keyboard)
+#         await Add_new_cont_user_state.next()
 
-    data = await state.get_data()
-    cont_id = data["cont_id"]
+#     except:
+#         data = await state.get_data()
+#         db.update_cont_user(cont_id, dict_oper=data)
+#         await state.finish()
+#         await message.answer(f"Получатель добавлен", reply_markup=main_menu(message))
+#         await lst_cont_users_keyboard(message)
 
-    await state.update_data({f'{result[0]}': f'{value}'})
 
-    Dict_turn[f'{message.chat.id}'] += 1
+# @dp.callback_query_handler(text="pass_parametr", state=Add_new_cont_user_state.Q6)
+# @dp.message_handler(state=Add_new_cont_user_state.Q6)
+# async def register_6(message, state: FSMContext):
+#     if type(message) == types.Message:
+#         value = message.text
+#     elif type(message) == types.CallbackQuery:
+#         value = "Пропустить"
+#         message = message.message
+#     result = Dict_temp_oper[f'{message.chat.id}'][Dict_turn[f'{message.chat.id}']]
 
-    try:
-        result = Dict_temp_oper[f'{message.chat.id}'][Dict_turn[f'{message.chat.id}']]
+#     data = await state.get_data()
+#     cont_id = data["cont_id"]
 
-        await message.answer(f"Напиши {result[3].lower()}", reply_markup=pass_parametr_keyboard)
-        await Add_new_cont_user_state.next()
+#     await state.update_data({f'{result[0]}': f'{value}'})
 
-    except:
-        data = await state.get_data()
-        db.update_cont_user(cont_id, dict_oper=data)
-        await state.finish()
-        await message.answer(f"Получатель добавлен", reply_markup=main_menu(message))
-        await lst_cont_users_keyboard(message)
+#     Dict_turn[f'{message.chat.id}'] += 1
 
+#     try:
+#         result = Dict_temp_oper[f'{message.chat.id}'][Dict_turn[f'{message.chat.id}']]
 
-@dp.message_handler(state=Add_new_cont_user_state.Q6)
-async def register_6(message: types.Message, state: FSMContext):
-    value = message.text
-    result = Dict_temp_oper[f'{message.chat.id}'][Dict_turn[f'{message.chat.id}']]
+#         await message.answer(f"Напиши {result[3].lower()}", reply_markup=pass_parametr_keyboard)
+#         await Add_new_cont_user_state.next()
 
-    data = await state.get_data()
-    cont_id = data["cont_id"]
+#     except:
+#         data = await state.get_data()
+#         db.update_cont_user(cont_id, dict_oper=data)
+#         await state.finish()
+#         await message.answer(f"Получатель добавлен", reply_markup=main_menu(message))
+#         await lst_cont_users_keyboard(message)
 
-    await state.update_data({f'{result[0]}': f'{value}'})
 
-    Dict_turn[f'{message.chat.id}'] += 1
+# @dp.message_handler(state=Add_new_cont_user_state.Q7)
+# async def register_7(message: types.Message, state: FSMContext):
+#     value = message.text
+#     result = Dict_temp_oper[f'{message.chat.id}'][Dict_turn[f'{message.chat.id}']]
 
-    try:
-        result = Dict_temp_oper[f'{message.chat.id}'][Dict_turn[f'{message.chat.id}']]
+#     data = await state.get_data()
+#     cont_id = data["cont_id"]
 
-        await message.answer(f"Напиши {result[3].lower()}", reply_markup=pass_parametr_keyboard)
-        await Add_new_cont_user_state.next()
+#     await state.update_data({f'{result[0]}': f'{value}'})
 
-    except:
-        data = await state.get_data()
-        db.update_cont_user(cont_id, dict_oper=data)
-        await state.finish()
-        await message.answer(f"Получатель добавлен", reply_markup=main_menu(message))
-        await lst_cont_users_keyboard(message)
+#     Dict_turn[f'{message.chat.id}'] += 1
 
+#     try:
+#         result = Dict_temp_oper[f'{message.chat.id}'][Dict_turn[f'{message.chat.id}']]
 
-@dp.message_handler(state=Add_new_cont_user_state.Q7)
-async def register_7(message: types.Message, state: FSMContext):
-    value = message.text
-    result = Dict_temp_oper[f'{message.chat.id}'][Dict_turn[f'{message.chat.id}']]
+#         await message.answer(f"Напиши {result[3].lower()}", reply_markup=pass_parametr_keyboard)
+#         await Add_new_cont_user_state.next()
 
-    data = await state.get_data()
-    cont_id = data["cont_id"]
+#     except:
+#         data = await state.get_data()
+#         db.update_cont_user(cont_id, dict_oper=data)
+#         await state.finish()
+#         await message.answer(f"Получатель добавлен", reply_markup=main_menu(message))
+#         await lst_cont_users_keyboard(message)
 
-    await state.update_data({f'{result[0]}': f'{value}'})
 
-    Dict_turn[f'{message.chat.id}'] += 1
+# @dp.message_handler(state=Add_new_cont_user_state.Q8)
+# async def register_8(message: types.Message, state: FSMContext):
+#     value = message.text
+#     result = Dict_temp_oper[f'{message.chat.id}'][Dict_turn[f'{message.chat.id}']]
 
-    try:
-        result = Dict_temp_oper[f'{message.chat.id}'][Dict_turn[f'{message.chat.id}']]
+#     data = await state.get_data()
+#     cont_id = data["cont_id"]
 
-        await message.answer(f"Напиши {result[3].lower()}", reply_markup=pass_parametr_keyboard)
-        await Add_new_cont_user_state.next()
+#     await state.update_data({f'{result[0]}': f'{value}'})
 
-    except:
-        data = await state.get_data()
-        db.update_cont_user(cont_id, dict_oper=data)
-        await state.finish()
-        await message.answer(f"Получатель добавлен", reply_markup=main_menu(message))
-        await lst_cont_users_keyboard(message)
+#     Dict_turn[f'{message.chat.id}'] += 1
 
+#     try:
+#         result = Dict_temp_oper[f'{message.chat.id}'][Dict_turn[f'{message.chat.id}']]
 
-@dp.message_handler(state=Add_new_cont_user_state.Q8)
-async def register_8(message: types.Message, state: FSMContext):
-    value = message.text
-    result = Dict_temp_oper[f'{message.chat.id}'][Dict_turn[f'{message.chat.id}']]
+#         await message.answer(f"Напиши {result[3].lower()}", reply_markup=pass_parametr_keyboard)
+#         await Add_new_cont_user_state.next()
 
-    data = await state.get_data()
-    cont_id = data["cont_id"]
+#     except:
+#         data = await state.get_data()
+#         db.update_cont_user(cont_id, dict_oper=data)
+#         await state.finish()
+#         await message.answer(f"Получатель добавлен", reply_markup=main_menu(message))
+#         await lst_cont_users_keyboard(message)
 
-    await state.update_data({f'{result[0]}': f'{value}'})
 
-    Dict_turn[f'{message.chat.id}'] += 1
+# @dp.message_handler(state=Add_new_cont_user_state.Q9)
+# async def register_9(message: types.Message, state: FSMContext):
+#     value = message.text
+#     result = Dict_temp_oper[f'{message.chat.id}'][Dict_turn[f'{message.chat.id}']]
 
-    try:
-        result = Dict_temp_oper[f'{message.chat.id}'][Dict_turn[f'{message.chat.id}']]
+#     data = await state.get_data()
+#     cont_id = data["cont_id"]
 
-        await message.answer(f"Напиши {result[3].lower()}", reply_markup=pass_parametr_keyboard)
-        await Add_new_cont_user_state.next()
+#     await state.update_data({f'{result[0]}': f'{value}'})
 
-    except:
-        data = await state.get_data()
-        db.update_cont_user(cont_id, dict_oper=data)
-        await state.finish()
-        await message.answer(f"Получатель добавлен", reply_markup=main_menu(message))
-        await lst_cont_users_keyboard(message)
+#     Dict_turn[f'{message.chat.id}'] += 1
 
+#     try:
+#         result = Dict_temp_oper[f'{message.chat.id}'][Dict_turn[f'{message.chat.id}']]
 
-@dp.message_handler(state=Add_new_cont_user_state.Q9)
-async def register_9(message: types.Message, state: FSMContext):
-    value = message.text
-    result = Dict_temp_oper[f'{message.chat.id}'][Dict_turn[f'{message.chat.id}']]
+#         await message.answer(f"Напиши {result[3].lower()}", reply_markup=pass_parametr_keyboard)
+#         await Add_new_cont_user_state.next()
 
-    data = await state.get_data()
-    cont_id = data["cont_id"]
+#     except:
+#         data = await state.get_data()
+#         db.update_cont_user(cont_id, dict_oper=data)
+#         await state.finish()
+#         await message.answer(f"Получатель добавлен", reply_markup=main_menu(message))
+#         await lst_cont_users_keyboard(message)
 
-    await state.update_data({f'{result[0]}': f'{value}'})
 
-    Dict_turn[f'{message.chat.id}'] += 1
+# @dp.message_handler(state=Add_new_cont_user_state.Q10)
+# async def register_10(message: types.Message, state: FSMContext):
+#     value = message.text
+#     result = Dict_temp_oper[f'{message.chat.id}'][Dict_turn[f'{message.chat.id}']]
 
-    try:
-        result = Dict_temp_oper[f'{message.chat.id}'][Dict_turn[f'{message.chat.id}']]
+#     data = await state.get_data()
+#     cont_id = data["cont_id"]
 
-        await message.answer(f"Напиши {result[3].lower()}", reply_markup=pass_parametr_keyboard)
-        await Add_new_cont_user_state.next()
+#     await state.update_data({f'{result[0]}': f'{value}'})
 
-    except:
-        data = await state.get_data()
-        db.update_cont_user(cont_id, dict_oper=data)
-        await state.finish()
-        await message.answer(f"Получатель добавлен", reply_markup=main_menu(message))
-        await lst_cont_users_keyboard(message)
+#     Dict_turn[f'{message.chat.id}'] += 1
 
+#     try:
+#         result = Dict_temp_oper[f'{message.chat.id}'][Dict_turn[f'{message.chat.id}']]
 
-@dp.message_handler(state=Add_new_cont_user_state.Q10)
-async def register_10(message: types.Message, state: FSMContext):
-    value = message.text
-    result = Dict_temp_oper[f'{message.chat.id}'][Dict_turn[f'{message.chat.id}']]
+#         await message.answer(f"Напиши {result[3].lower()}", reply_markup=pass_parametr_keyboard)
+#         await Add_new_cont_user_state.next()
 
-    data = await state.get_data()
-    cont_id = data["cont_id"]
+#     except:
+#         data = await state.get_data()
+#         db.update_cont_user(cont_id, dict_oper=data)
+#         await state.finish()
+#         await message.answer(f"Получатель добавлен", reply_markup=main_menu(message))
+#         await lst_cont_users_keyboard(message)
 
-    await state.update_data({f'{result[0]}': f'{value}'})
 
-    Dict_turn[f'{message.chat.id}'] += 1
+# @dp.message_handler(state=Add_new_cont_user_state.Q11)
+# async def register_11(message: types.Message, state: FSMContext):
+#     value = message.text
+#     result = Dict_temp_oper[f'{message.chat.id}'][Dict_turn[f'{message.chat.id}']]
 
-    try:
-        result = Dict_temp_oper[f'{message.chat.id}'][Dict_turn[f'{message.chat.id}']]
+#     data = await state.get_data()
+#     cont_id = data["cont_id"]
 
-        await message.answer(f"Напиши {result[3].lower()}", reply_markup=pass_parametr_keyboard)
-        await Add_new_cont_user_state.next()
+#     await state.update_data({f'{result[0]}': f'{value}'})
 
-    except:
-        data = await state.get_data()
-        db.update_cont_user(cont_id, dict_oper=data)
-        await state.finish()
-        await message.answer(f"Получатель добавлен", reply_markup=main_menu(message))
-        await lst_cont_users_keyboard(message)
+#     Dict_turn[f'{message.chat.id}'] += 1
 
+#     try:
+#         result = Dict_temp_oper[f'{message.chat.id}'][Dict_turn[f'{message.chat.id}']]
 
-@dp.message_handler(state=Add_new_cont_user_state.Q11)
-async def register_11(message: types.Message, state: FSMContext):
-    value = message.text
-    result = Dict_temp_oper[f'{message.chat.id}'][Dict_turn[f'{message.chat.id}']]
+#         await message.answer(f"Напиши {result[3].lower()}", reply_markup=pass_parametr_keyboard)
+#         await Add_new_cont_user_state.next()
 
-    data = await state.get_data()
-    cont_id = data["cont_id"]
+#     except:
+#         data = await state.get_data()
+#         db.update_cont_user(cont_id, dict_oper=data)
+#         await state.finish()
+#         await message.answer(f"Получатель добавлен", reply_markup=main_menu(message))
+#         await lst_cont_users_keyboard(message)
 
-    await state.update_data({f'{result[0]}': f'{value}'})
 
-    Dict_turn[f'{message.chat.id}'] += 1
+# @dp.message_handler(state=Add_new_cont_user_state.Q12)
+# async def register_12(message: types.Message, state: FSMContext):
+#     value = message.text
+#     result = Dict_temp_oper[f'{message.chat.id}'][Dict_turn[f'{message.chat.id}']]
 
-    try:
-        result = Dict_temp_oper[f'{message.chat.id}'][Dict_turn[f'{message.chat.id}']]
+#     data = await state.get_data()
+#     cont_id = data["cont_id"]
 
-        await message.answer(f"Напиши {result[3].lower()}", reply_markup=pass_parametr_keyboard)
-        await Add_new_cont_user_state.next()
+#     await state.update_data({f'{result[0]}': f'{value}'})
 
-    except:
-        data = await state.get_data()
-        db.update_cont_user(cont_id, dict_oper=data)
-        await state.finish()
-        await message.answer(f"Получатель добавлен", reply_markup=main_menu(message))
-        await lst_cont_users_keyboard(message)
+#     Dict_turn[f'{message.chat.id}'] += 1
 
+#     try:
+#         result = Dict_temp_oper[f'{message.chat.id}'][Dict_turn[f'{message.chat.id}']]
 
-@dp.message_handler(state=Add_new_cont_user_state.Q12)
-async def register_12(message: types.Message, state: FSMContext):
-    value = message.text
-    result = Dict_temp_oper[f'{message.chat.id}'][Dict_turn[f'{message.chat.id}']]
+#         await message.answer(f"Напиши {result[3].lower()}", reply_markup=pass_parametr_keyboard)
+#         await Add_new_cont_user_state.next()
 
-    data = await state.get_data()
-    cont_id = data["cont_id"]
-
-    await state.update_data({f'{result[0]}': f'{value}'})
-
-    Dict_turn[f'{message.chat.id}'] += 1
-
-    try:
-        result = Dict_temp_oper[f'{message.chat.id}'][Dict_turn[f'{message.chat.id}']]
-
-        await message.answer(f"Напиши {result[3].lower()}", reply_markup=pass_parametr_keyboard)
-        await Add_new_cont_user_state.next()
-
-    except:
-        data = await state.get_data()
-        db.update_cont_user(cont_id, dict_oper=data)
-        await state.finish()
-        await message.answer(f"Получатель добавлен", reply_markup=main_menu(message))
-        await lst_cont_users_keyboard(message)
+#     except:
+#         data = await state.get_data()
+#         db.update_cont_user(cont_id, dict_oper=data)
+#         await state.finish()
+#         await message.answer(f"Получатель добавлен", reply_markup=main_menu(message))
+#         await lst_cont_users_keyboard(message)

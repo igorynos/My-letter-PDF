@@ -115,16 +115,27 @@ async def create_letter_1(message: types.Message, state: FSMContext):
     my_card_value = my_card_value[0]
     my_card_key = db.execute(sql_key_my, fetchall=True, commit=True)
 
-    dict_oper = {}
-    for i, x in enumerate(cont_card_key):
-        dict_oper[f"{x[1]}"] = cont_card_value[i]
-    for i, x in enumerate(my_card_key):
-        dict_oper[f"{x[1]}"] = my_card_value[i]
+    try:
+        data = await state.get_data()
+        dict_oper = data['dict_oper']
+    except:
+        dict_oper = {}
+        for i, x in enumerate(cont_card_key):
+            dict_oper[f"{x[1]}"] = cont_card_value[i]
+        for i, x in enumerate(my_card_key):
+            dict_oper[f"{x[1]}"] = my_card_value[i]
+        if "data" in full_text:
+            dict_oper[f"data"] = doc_data
+        if "doc_text" in full_text:
+            dict_oper[f"doc_text"] = ''
 
     lst_none = []
 
     for x in full_text:
-        if dict_oper[x] == "":
+        try:
+            if dict_oper[x] == "":
+                lst_none.append(x)
+        except:
             lst_none.append(x)
     await state.update_data(
         {
@@ -204,613 +215,47 @@ async def user_none(message: types.Message, state: FSMContext):
     await State_list.first()
 
 
+async def handle_answer_lst(message: types.Message, state: FSMContext):
+    data = await state.get_data()
+    lst_none = data['lst_none']
+    dict_oper = data['dict_oper']
+
+    dict_oper[lst_none[dict_user_indx[f"{message.chat.id}"]]] = message.text
+
+    try:
+        dict_user_indx[f"{message.chat.id}"] += 1
+        await state.update_data({'dict_oper': dict_oper, 'lst_none': lst_none})
+        oper = lst_none[dict_user_indx[f"{message.chat.id}"]]
+        result = db.execute(
+            f"SELECT full FROM lst_oper WHERE oper='{oper}'", fetchone=True, commit=True)
+        await message.answer(text=f'Введите {result[0].lower()}')
+        await State_list.next()
+    except:
+        db.update_cont_user(
+            cont_id=dict_temp_cont_user[f"{message.chat.id}"], dict_oper=dict_oper)
+        db.update_user(id=message.chat.id, dict_oper=dict_oper)
+        await create_letter_1(message=message, state=state)
+
+
 @dp.message_handler(state=State_list.Q0)
-async def answer_lst(message: types.Message, state: FSMContext):
-    data = await state.get_data()
-    lst_none = data['lst_none']
-    dict_oper = data['dict_oper']
-
-    if lst_none[dict_user_indx[f"{message.chat.id}"]] == "doc_text":
-        pass
-    elif lst_none[dict_user_indx[f"{message.chat.id}"]] == "data":
-        pass
-
-    dict_oper[lst_none[dict_user_indx[f"{message.chat.id}"]]] = message.text
-
-    try:
-        dict_user_indx[f"{message.chat.id}"] += 1
-        await state.update_data(
-            {
-                'dict_oper': dict_oper,
-                'lst_none': lst_none
-            }
-        )
-        oper = lst_none[dict_user_indx[f"{message.chat.id}"]]
-        sql = f"SELECT full FROM lst_oper WHERE oper='{oper}'"
-        result = db.execute(sql, fetchone=True, commit=True)
-        result = result[0]
-
-        await message.answer(text=f'Введите {result.lower()}')
-        await State_list.next()
-
-    except:
-        db.update_cont_user(
-            cont_id=dict_temp_cont_user[f"{message.chat.id}"], dict_oper=dict_oper)
-        db.update_user(id=message.chat.id, dict_oper=dict_oper)
-        await create_letter_1(message=message, state=state)
-
-
 @dp.message_handler(state=State_list.Q1)
-async def answer_lst(message: types.Message, state: FSMContext):
-    data = await state.get_data()
-    lst_none = data['lst_none']
-    dict_oper = data['dict_oper']
-
-    if lst_none[dict_user_indx[f"{message.chat.id}"]] == "doc_text":
-        pass
-    elif lst_none[dict_user_indx[f"{message.chat.id}"]] == "data":
-        pass
-
-    dict_oper[lst_none[dict_user_indx[f"{message.chat.id}"]]] = message.text
-
-    try:
-        dict_user_indx[f"{message.chat.id}"] += 1
-        await state.update_data(
-            {
-                'dict_oper': dict_oper,
-                'lst_none': lst_none
-            }
-        )
-        oper = lst_none[dict_user_indx[f"{message.chat.id}"]]
-        sql = f"SELECT full FROM lst_oper WHERE oper='{oper}'"
-        result = db.execute(sql, fetchone=True, commit=True)
-        result = result[0]
-
-        await message.answer(text=f'Введите {result.lower()}')
-        await State_list.next()
-
-    except:
-        db.update_cont_user(
-            cont_id=dict_temp_cont_user[f"{message.chat.id}"], dict_oper=dict_oper)
-        db.update_user(id=message.chat.id, dict_oper=dict_oper)
-        await create_letter_1(message=message, state=state)
-
-
 @dp.message_handler(state=State_list.Q2)
-async def answer_lst(message: types.Message, state: FSMContext):
-    data = await state.get_data()
-    lst_none = data['lst_none']
-    dict_oper = data['dict_oper']
-
-    if lst_none[dict_user_indx[f"{message.chat.id}"]] == "doc_text":
-        pass
-    elif lst_none[dict_user_indx[f"{message.chat.id}"]] == "data":
-        pass
-
-    dict_oper[lst_none[dict_user_indx[f"{message.chat.id}"]]] = message.text
-
-    try:
-        dict_user_indx[f"{message.chat.id}"] += 1
-        await state.update_data(
-            {
-                'dict_oper': dict_oper,
-                'lst_none': lst_none
-            }
-        )
-        oper = lst_none[dict_user_indx[f"{message.chat.id}"]]
-        sql = f"SELECT full FROM lst_oper WHERE oper='{oper}'"
-        result = db.execute(sql, fetchone=True, commit=True)
-        result = result[0]
-
-        await message.answer(text=f'Введите {result.lower()}')
-        await State_list.next()
-
-    except:
-        db.update_cont_user(
-            cont_id=dict_temp_cont_user[f"{message.chat.id}"], dict_oper=dict_oper)
-        db.update_user(id=message.chat.id, dict_oper=dict_oper)
-        await create_letter_1(message=message, state=state)
-
-
 @dp.message_handler(state=State_list.Q3)
-async def answer_lst(message: types.Message, state: FSMContext):
-    data = await state.get_data()
-    lst_none = data['lst_none']
-    dict_oper = data['dict_oper']
-
-    if lst_none[dict_user_indx[f"{message.chat.id}"]] == "doc_text":
-        pass
-    elif lst_none[dict_user_indx[f"{message.chat.id}"]] == "data":
-        pass
-
-    dict_oper[lst_none[dict_user_indx[f"{message.chat.id}"]]] = message.text
-
-    try:
-        dict_user_indx[f"{message.chat.id}"] += 1
-        await state.update_data(
-            {
-                'dict_oper': dict_oper,
-                'lst_none': lst_none
-            }
-        )
-        oper = lst_none[dict_user_indx[f"{message.chat.id}"]]
-        sql = f"SELECT full FROM lst_oper WHERE oper='{oper}'"
-        result = db.execute(sql, fetchone=True, commit=True)
-        result = result[0]
-
-        await message.answer(text=f'Введите {result.lower()}')
-        await State_list.next()
-
-    except:
-        db.update_cont_user(
-            cont_id=dict_temp_cont_user[f"{message.chat.id}"], dict_oper=dict_oper)
-        db.update_user(id=message.chat.id, dict_oper=dict_oper)
-        await create_letter_1(message=message, state=state)
-
-
 @dp.message_handler(state=State_list.Q4)
-async def answer_lst(message: types.Message, state: FSMContext):
-    data = await state.get_data()
-    lst_none = data['lst_none']
-    dict_oper = data['dict_oper']
-
-    if lst_none[dict_user_indx[f"{message.chat.id}"]] == "doc_text":
-        pass
-    elif lst_none[dict_user_indx[f"{message.chat.id}"]] == "data":
-        pass
-
-    dict_oper[lst_none[dict_user_indx[f"{message.chat.id}"]]] = message.text
-
-    try:
-        dict_user_indx[f"{message.chat.id}"] += 1
-        await state.update_data(
-            {
-                'dict_oper': dict_oper,
-                'lst_none': lst_none
-            }
-        )
-        oper = lst_none[dict_user_indx[f"{message.chat.id}"]]
-        sql = f"SELECT full FROM lst_oper WHERE oper='{oper}'"
-        result = db.execute(sql, fetchone=True, commit=True)
-        result = result[0]
-
-        await message.answer(text=f'Введите {result.lower()}')
-        await State_list.next()
-
-    except:
-        db.update_cont_user(
-            cont_id=dict_temp_cont_user[f"{message.chat.id}"], dict_oper=dict_oper)
-        db.update_user(id=message.chat.id, dict_oper=dict_oper)
-        await create_letter_1(message=message, state=state)
-
-
 @dp.message_handler(state=State_list.Q5)
-async def answer_lst(message: types.Message, state: FSMContext):
-    data = await state.get_data()
-    lst_none = data['lst_none']
-    dict_oper = data['dict_oper']
-
-    if lst_none[dict_user_indx[f"{message.chat.id}"]] == "doc_text":
-        pass
-    elif lst_none[dict_user_indx[f"{message.chat.id}"]] == "data":
-        pass
-
-    dict_oper[lst_none[dict_user_indx[f"{message.chat.id}"]]] = message.text
-
-    try:
-        dict_user_indx[f"{message.chat.id}"] += 1
-        await state.update_data(
-            {
-                'dict_oper': dict_oper,
-                'lst_none': lst_none
-            }
-        )
-        oper = lst_none[dict_user_indx[f"{message.chat.id}"]]
-        sql = f"SELECT full FROM lst_oper WHERE oper='{oper}'"
-        result = db.execute(sql, fetchone=True, commit=True)
-        result = result[0]
-
-        await message.answer(text=f'Введите {result.lower()}')
-        await State_list.next()
-
-    except:
-        db.update_cont_user(
-            cont_id=dict_temp_cont_user[f"{message.chat.id}"], dict_oper=dict_oper)
-        db.update_user(id=message.chat.id, dict_oper=dict_oper)
-        await create_letter_1(message=message, state=state)
-
-
 @dp.message_handler(state=State_list.Q6)
-async def answer_lst(message: types.Message, state: FSMContext):
-    data = await state.get_data()
-    lst_none = data['lst_none']
-    dict_oper = data['dict_oper']
-
-    if lst_none[dict_user_indx[f"{message.chat.id}"]] == "doc_text":
-        pass
-    elif lst_none[dict_user_indx[f"{message.chat.id}"]] == "data":
-        pass
-
-    dict_oper[lst_none[dict_user_indx[f"{message.chat.id}"]]] = message.text
-
-    try:
-        dict_user_indx[f"{message.chat.id}"] += 1
-        await state.update_data(
-            {
-                'dict_oper': dict_oper,
-                'lst_none': lst_none
-            }
-        )
-        oper = lst_none[dict_user_indx[f"{message.chat.id}"]]
-        sql = f"SELECT full FROM lst_oper WHERE oper='{oper}'"
-        result = db.execute(sql, fetchone=True, commit=True)
-        result = result[0]
-
-        await message.answer(text=f'Введите {result.lower()}')
-        await State_list.next()
-
-    except:
-        db.update_cont_user(
-            cont_id=dict_temp_cont_user[f"{message.chat.id}"], dict_oper=dict_oper)
-        db.update_user(id=message.chat.id, dict_oper=dict_oper)
-        await create_letter_1(message=message, state=state)
-
-
 @dp.message_handler(state=State_list.Q7)
-async def answer_lst(message: types.Message, state: FSMContext):
-    data = await state.get_data()
-    lst_none = data['lst_none']
-    dict_oper = data['dict_oper']
-
-    if lst_none[dict_user_indx[f"{message.chat.id}"]] == "doc_text":
-        pass
-    elif lst_none[dict_user_indx[f"{message.chat.id}"]] == "data":
-        pass
-
-    dict_oper[lst_none[dict_user_indx[f"{message.chat.id}"]]] = message.text
-
-    try:
-        dict_user_indx[f"{message.chat.id}"] += 1
-        await state.update_data(
-            {
-                'dict_oper': dict_oper,
-                'lst_none': lst_none
-            }
-        )
-        oper = lst_none[dict_user_indx[f"{message.chat.id}"]]
-        sql = f"SELECT full FROM lst_oper WHERE oper='{oper}'"
-        result = db.execute(sql, fetchone=True, commit=True)
-        result = result[0]
-
-        await message.answer(text=f'Введите {result.lower()}')
-        await State_list.next()
-
-    except:
-        db.update_cont_user(
-            cont_id=dict_temp_cont_user[f"{message.chat.id}"], dict_oper=dict_oper)
-        db.update_user(id=message.chat.id, dict_oper=dict_oper)
-        await create_letter_1(message=message, state=state)
-
-
 @dp.message_handler(state=State_list.Q8)
-async def answer_lst(message: types.Message, state: FSMContext):
-    data = await state.get_data()
-    lst_none = data['lst_none']
-    dict_oper = data['dict_oper']
-
-    if lst_none[dict_user_indx[f"{message.chat.id}"]] == "doc_text":
-        pass
-    elif lst_none[dict_user_indx[f"{message.chat.id}"]] == "data":
-        pass
-
-    dict_oper[lst_none[dict_user_indx[f"{message.chat.id}"]]] = message.text
-
-    try:
-        dict_user_indx[f"{message.chat.id}"] += 1
-        await state.update_data(
-            {
-                'dict_oper': dict_oper,
-                'lst_none': lst_none
-            }
-        )
-        oper = lst_none[dict_user_indx[f"{message.chat.id}"]]
-        sql = f"SELECT full FROM lst_oper WHERE oper='{oper}'"
-        result = db.execute(sql, fetchone=True, commit=True)
-        result = result[0]
-
-        await message.answer(text=f'Введите {result.lower()}')
-        await State_list.next()
-
-    except:
-        db.update_cont_user(
-            cont_id=dict_temp_cont_user[f"{message.chat.id}"], dict_oper=dict_oper)
-        db.update_user(id=message.chat.id, dict_oper=dict_oper)
-        await create_letter_1(message=message, state=state)
-
-
 @dp.message_handler(state=State_list.Q9)
-async def answer_lst(message: types.Message, state: FSMContext):
-    data = await state.get_data()
-    lst_none = data['lst_none']
-    dict_oper = data['dict_oper']
-
-    if lst_none[dict_user_indx[f"{message.chat.id}"]] == "doc_text":
-        pass
-    elif lst_none[dict_user_indx[f"{message.chat.id}"]] == "data":
-        pass
-
-    dict_oper[lst_none[dict_user_indx[f"{message.chat.id}"]]] = message.text
-
-    try:
-        dict_user_indx[f"{message.chat.id}"] += 1
-        await state.update_data(
-            {
-                'dict_oper': dict_oper,
-                'lst_none': lst_none
-            }
-        )
-        oper = lst_none[dict_user_indx[f"{message.chat.id}"]]
-        sql = f"SELECT full FROM lst_oper WHERE oper='{oper}'"
-        result = db.execute(sql, fetchone=True, commit=True)
-        result = result[0]
-
-        await message.answer(text=f'Введите {result.lower()}')
-        await State_list.next()
-
-    except:
-        db.update_cont_user(
-            cont_id=dict_temp_cont_user[f"{message.chat.id}"], dict_oper=dict_oper)
-        db.update_user(id=message.chat.id, dict_oper=dict_oper)
-        await create_letter_1(message=message, state=state)
-
-
 @dp.message_handler(state=State_list.Q10)
-async def answer_lst(message: types.Message, state: FSMContext):
-    data = await state.get_data()
-    lst_none = data['lst_none']
-    dict_oper = data['dict_oper']
-
-    if lst_none[dict_user_indx[f"{message.chat.id}"]] == "doc_text":
-        pass
-    elif lst_none[dict_user_indx[f"{message.chat.id}"]] == "data":
-        pass
-
-    dict_oper[lst_none[dict_user_indx[f"{message.chat.id}"]]] = message.text
-
-    try:
-        dict_user_indx[f"{message.chat.id}"] += 1
-        await state.update_data(
-            {
-                'dict_oper': dict_oper,
-                'lst_none': lst_none
-            }
-        )
-        oper = lst_none[dict_user_indx[f"{message.chat.id}"]]
-        sql = f"SELECT full FROM lst_oper WHERE oper='{oper}'"
-        result = db.execute(sql, fetchone=True, commit=True)
-        result = result[0]
-
-        await message.answer(text=f'Введите {result.lower()}')
-        await State_list.next()
-
-    except:
-        db.update_cont_user(
-            cont_id=dict_temp_cont_user[f"{message.chat.id}"], dict_oper=dict_oper)
-        db.update_user(id=message.chat.id, dict_oper=dict_oper)
-        await create_letter_1(message=message, state=state)
-
-
 @dp.message_handler(state=State_list.Q11)
-async def answer_lst(message: types.Message, state: FSMContext):
-    data = await state.get_data()
-    lst_none = data['lst_none']
-    dict_oper = data['dict_oper']
-
-    if lst_none[dict_user_indx[f"{message.chat.id}"]] == "doc_text":
-        pass
-    elif lst_none[dict_user_indx[f"{message.chat.id}"]] == "data":
-        pass
-
-    dict_oper[lst_none[dict_user_indx[f"{message.chat.id}"]]] = message.text
-
-    try:
-        dict_user_indx[f"{message.chat.id}"] += 1
-        await state.update_data(
-            {
-                'dict_oper': dict_oper,
-                'lst_none': lst_none
-            }
-        )
-        oper = lst_none[dict_user_indx[f"{message.chat.id}"]]
-        sql = f"SELECT full FROM lst_oper WHERE oper='{oper}'"
-        result = db.execute(sql, fetchone=True, commit=True)
-        result = result[0]
-
-        await message.answer(text=f'Введите {result.lower()}')
-        await State_list.next()
-
-    except:
-        db.update_cont_user(
-            cont_id=dict_temp_cont_user[f"{message.chat.id}"], dict_oper=dict_oper)
-        db.update_user(id=message.chat.id, dict_oper=dict_oper)
-        await create_letter_1(message=message, state=state)
-
-
 @dp.message_handler(state=State_list.Q12)
-async def answer_lst(message: types.Message, state: FSMContext):
-    data = await state.get_data()
-    lst_none = data['lst_none']
-    dict_oper = data['dict_oper']
-
-    if lst_none[dict_user_indx[f"{message.chat.id}"]] == "doc_text":
-        pass
-    elif lst_none[dict_user_indx[f"{message.chat.id}"]] == "data":
-        pass
-
-    dict_oper[lst_none[dict_user_indx[f"{message.chat.id}"]]] = message.text
-
-    try:
-        dict_user_indx[f"{message.chat.id}"] += 1
-        await state.update_data(
-            {
-                'dict_oper': dict_oper,
-                'lst_none': lst_none
-            }
-        )
-        oper = lst_none[dict_user_indx[f"{message.chat.id}"]]
-        sql = f"SELECT full FROM lst_oper WHERE oper='{oper}'"
-        result = db.execute(sql, fetchone=True, commit=True)
-        result = result[0]
-
-        await message.answer(text=f'Введите {result.lower()}')
-        await State_list.next()
-
-    except:
-        db.update_cont_user(
-            cont_id=dict_temp_cont_user[f"{message.chat.id}"], dict_oper=dict_oper)
-        db.update_user(id=message.chat.id, dict_oper=dict_oper)
-        await create_letter_1(message=message, state=state)
-
-
 @dp.message_handler(state=State_list.Q13)
-async def answer_lst(message: types.Message, state: FSMContext):
-    data = await state.get_data()
-    lst_none = data['lst_none']
-    dict_oper = data['dict_oper']
-
-    if lst_none[dict_user_indx[f"{message.chat.id}"]] == "doc_text":
-        pass
-    elif lst_none[dict_user_indx[f"{message.chat.id}"]] == "data":
-        pass
-
-    dict_oper[lst_none[dict_user_indx[f"{message.chat.id}"]]] = message.text
-
-    try:
-        dict_user_indx[f"{message.chat.id}"] += 1
-        await state.update_data(
-            {
-                'dict_oper': dict_oper,
-                'lst_none': lst_none
-            }
-        )
-        oper = lst_none[dict_user_indx[f"{message.chat.id}"]]
-        sql = f"SELECT full FROM lst_oper WHERE oper='{oper}'"
-        result = db.execute(sql, fetchone=True, commit=True)
-        result = result[0]
-
-        await message.answer(text=f'Введите {result.lower()}')
-        await State_list.next()
-
-    except:
-        db.update_cont_user(
-            cont_id=dict_temp_cont_user[f"{message.chat.id}"], dict_oper=dict_oper)
-        db.update_user(id=message.chat.id, dict_oper=dict_oper)
-        await create_letter_1(message=message, state=state)
-
-
 @dp.message_handler(state=State_list.Q14)
-async def answer_lst(message: types.Message, state: FSMContext):
-    data = await state.get_data()
-    lst_none = data['lst_none']
-    dict_oper = data['dict_oper']
-
-    if lst_none[dict_user_indx[f"{message.chat.id}"]] == "doc_text":
-        pass
-    elif lst_none[dict_user_indx[f"{message.chat.id}"]] == "data":
-        pass
-
-    dict_oper[lst_none[dict_user_indx[f"{message.chat.id}"]]] = message.text
-
-    try:
-        dict_user_indx[f"{message.chat.id}"] += 1
-        await state.update_data(
-            {
-                'dict_oper': dict_oper,
-                'lst_none': lst_none
-            }
-        )
-        oper = lst_none[dict_user_indx[f"{message.chat.id}"]]
-        sql = f"SELECT full FROM lst_oper WHERE oper='{oper}'"
-        result = db.execute(sql, fetchone=True, commit=True)
-        result = result[0]
-
-        await message.answer(text=f'Введите {result.lower()}')
-        await State_list.next()
-
-    except:
-        db.update_cont_user(
-            cont_id=dict_temp_cont_user[f"{message.chat.id}"], dict_oper=dict_oper)
-        db.update_user(id=message.chat.id, dict_oper=dict_oper)
-        await create_letter_1(message=message, state=state)
-
-
 @dp.message_handler(state=State_list.Q15)
-async def answer_lst(message: types.Message, state: FSMContext):
-    data = await state.get_data()
-    lst_none = data['lst_none']
-    dict_oper = data['dict_oper']
-
-    if lst_none[dict_user_indx[f"{message.chat.id}"]] == "doc_text":
-        pass
-    elif lst_none[dict_user_indx[f"{message.chat.id}"]] == "data":
-        pass
-
-    dict_oper[lst_none[dict_user_indx[f"{message.chat.id}"]]] = message.text
-
-    try:
-        dict_user_indx[f"{message.chat.id}"] += 1
-        await state.update_data(
-            {
-                'dict_oper': dict_oper,
-                'lst_none': lst_none
-            }
-        )
-        oper = lst_none[dict_user_indx[f"{message.chat.id}"]]
-        sql = f"SELECT full FROM lst_oper WHERE oper='{oper}'"
-        result = db.execute(sql, fetchone=True, commit=True)
-        result = result[0]
-
-        await message.answer(text=f'Введите {result.lower()}')
-        await State_list.next()
-
-    except:
-        db.update_cont_user(
-            cont_id=dict_temp_cont_user[f"{message.chat.id}"], dict_oper=dict_oper)
-        db.update_user(id=message.chat.id, dict_oper=dict_oper)
-        await create_letter_1(message=message, state=state)
-
-
 @dp.message_handler(state=State_list.Q16)
+@dp.message_handler(state=State_list.Q17)
+@dp.message_handler(state=State_list.Q18)
+@dp.message_handler(state=State_list.Q19)
 async def answer_lst(message: types.Message, state: FSMContext):
-    data = await state.get_data()
-    lst_none = data['lst_none']
-    dict_oper = data['dict_oper']
-
-    if lst_none[dict_user_indx[f"{message.chat.id}"]] == "doc_text":
-        pass
-    elif lst_none[dict_user_indx[f"{message.chat.id}"]] == "data":
-        pass
-
-    dict_oper[lst_none[dict_user_indx[f"{message.chat.id}"]]] = message.text
-
-    try:
-        dict_user_indx[f"{message.chat.id}"] += 1
-        await state.update_data(
-            {
-                'dict_oper': dict_oper,
-                'lst_none': lst_none
-            }
-        )
-        oper = lst_none[dict_user_indx[f"{message.chat.id}"]]
-        sql = f"SELECT full FROM lst_oper WHERE oper='{oper}'"
-        result = db.execute(sql, fetchone=True, commit=True)
-        result = result[0]
-
-        await message.answer(text=f'Введите {result.lower()}')
-        await State_list.next()
-
-    except:
-        db.update_cont_user(
-            cont_id=dict_temp_cont_user[f"{message.chat.id}"], dict_oper=dict_oper)
-        db.update_user(id=message.chat.id, dict_oper=dict_oper)
-        await create_letter_1(message=message, state=state)
+    await handle_answer_lst(message, state)
