@@ -223,22 +223,21 @@ async def handle_answer_lst(message: types.Message, state: FSMContext):
     try:
         dict_oper[lst_none[dict_user_indx[f"{message.chat.id}"]]
                   ] = message.text
+        try:
+            dict_user_indx[f"{message.chat.id}"] += 1
+            await state.update_data({'dict_oper': dict_oper, 'lst_none': lst_none})
+            oper = lst_none[dict_user_indx[f"{message.chat.id}"]]
+            result = db.execute(
+                f"SELECT full FROM lst_oper WHERE oper='{oper}'", fetchone=True, commit=True)
+            await message.answer(text=f'Введите {result[0].lower()}')
+            await State_list.next()
+        except:
+            db.update_cont_user(
+                cont_id=dict_temp_cont_user[f"{message.chat.id}"], dict_oper=dict_oper)
+            db.update_user(id=message.chat.id, dict_oper=dict_oper)
+            await create_letter_1(message=message, state=state)
     except:
         await state.finish()
-
-    try:
-        dict_user_indx[f"{message.chat.id}"] += 1
-        await state.update_data({'dict_oper': dict_oper, 'lst_none': lst_none})
-        oper = lst_none[dict_user_indx[f"{message.chat.id}"]]
-        result = db.execute(
-            f"SELECT full FROM lst_oper WHERE oper='{oper}'", fetchone=True, commit=True)
-        await message.answer(text=f'Введите {result[0].lower()}')
-        await State_list.next()
-    except:
-        db.update_cont_user(
-            cont_id=dict_temp_cont_user[f"{message.chat.id}"], dict_oper=dict_oper)
-        db.update_user(id=message.chat.id, dict_oper=dict_oper)
-        await create_letter_1(message=message, state=state)
 
 
 @dp.message_handler(state=State_list.Q0)
