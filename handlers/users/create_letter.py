@@ -43,7 +43,6 @@ month_dict = {
 }
 current_datetime = datetime.now()
 
-# Extract and format the date
 current_date = current_datetime.strftime('%Y-%m-%d')
 doc_data = current_datetime.strftime(
     '%d %m %Y')
